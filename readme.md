@@ -31,13 +31,13 @@ The 16 parameters and the corresponding datatype are:
 
 ![Image from Kaggle](https://www.googleapis.com/download/storage/v1/b/kaggle-user-content/o/inbox%2F11592511%2F9107ea75bea18b095900b48e230bc4ec%2F2.jpg?generation=1688826287210809&alt=media 'Pistachio parameters')
 
-### Train fo the model
+### Train of the model
 
 The notebook with the analysis and preparation of the machine learning model is in this repo [link](https://github.com/carrionalfredo/Pistachio-Classifier/blob/main/project.ipynb).
 
 The pipeline for train, select the best model and promote the model to production is in the **training_aws.py** [file](https://github.com/carrionalfredo/Pistachio-Classifier/blob/main/training_aws.py).
 
-This pipeline uses mlflow and prefect to track and orchestrate the training runs. Also uses AWS EC2 instances with a S3 bucket as artifact storage, and RDS Postgres database backend store.
+This pipeline uses mlflow and prefect to track and orchestrate the training runs. Also uses AWS EC2 instances with a S3 bucket as artifact storage, and RDS Postgres database as backend store.
 
 The pipeline consists of the following task and flows:
 
@@ -54,7 +54,13 @@ The pipeline consists of the following task and flows:
 
 - **select_best_model** task. Function that select the training run with the highest validation AUC score from the set of runs in the remote server.
 - **register_best_model** task. Register in the remote mlflow server the best model selected in the **select_best_model** task.
+
+    ![mlflow runs](https://github.com/carrionalfredo/Pistachio-Classifier/blob/main/images/mlflow_runs.jpg 'mlflow runs')
+
 - **model_stage** flow. This function compare the newest registered model with the actual model in production stage, and select the registered model with greater validation AUC. If the new model registered has a better AUC score, promotes this model to **production** and archives the old. Otherwise, keep actual model in **production** and promotes the new model to **stagin**.
+
+    ![Registered models](https://github.com/carrionalfredo/Pistachio-Classifier/blob/main/images/mlflow_registered_models.jpg 'Registered models in mlflow')
+
 - **dump_model** task. Function that dump the model with a certain **run_id**. When in **model_stage** flow, this task dump the model promoted to production stage, to model [folder](https://github.com/carrionalfredo/Pistachio-Classifier/tree/main/model) in this repository, and replace the old file. The file in this folder, will be the used to load the logistic regression model for prediction runs.
 - **main** flow. Main function for the actual training and register pipeline.
 
