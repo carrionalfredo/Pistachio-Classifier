@@ -1,0 +1,9 @@
+services:
+  backend:
+    image: pistachio-classifier-service
+    ports:
+      - "8080:8080"
+    environment:
+      - EXPERIMENT="Pistachio_Classifier"
+    volumes:
+      - "./model:/app/model"
