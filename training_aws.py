@@ -22,7 +22,7 @@ from sklearn.metrics import roc_auc_score
 
 warnings.filterwarnings("ignore")
 
-os.environ["AWS_PROFILE"] = "default"
+PROFILE=os.getenv("AWS_PROFILE","default")
 TRACKING_SERVER_HOST = os.getenv('AWS_HOST')
 
 
@@ -258,7 +258,7 @@ def dump_model(run_id, experiment):
 
 
 @flow(retries=3, retry_delay_seconds=2, log_prints=True)
-def main(data_file, experiment="Pistachio_Classifier"):
+def main(data_file="pistachio_20230724", experiment="Pistachio_Classifier"):
     training_data, path = read_data(data_file=data_file)
 
     MLFLOW_TRACKING_URI, mlflow_experiment, experiment_id = training_model(
@@ -283,6 +283,7 @@ def main(data_file, experiment="Pistachio_Classifier"):
         auc=best_model_auc,
     )
 
+@flow()
 def run():
     datafile = sys.argv[1]
 
