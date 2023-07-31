@@ -3,7 +3,6 @@ import pickle
 from prefect import flow, task
 from flask import Flask, request, jsonify
 
-#experiment_name = os.getenv('EXPERIMENT', 'Pistachio_Classifier')
 experiment_name = os.getenv('EXPERIMENT')
 
 @task()
