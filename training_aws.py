@@ -23,7 +23,7 @@ from sklearn.metrics import roc_auc_score
 warnings.filterwarnings("ignore")
 
 os.environ["AWS_PROFILE"] = "default"
-TRACKING_SERVER_HOST = "ec2-3-85-227-102.compute-1.amazonaws.com"
+TRACKING_SERVER_HOST = os.getenv('AWS_HOST')
 
 
 @task(retries=3, retry_delay_seconds=2)
@@ -283,6 +283,10 @@ def main(data_file, experiment="Pistachio_Classifier"):
         auc=best_model_auc,
     )
 
+def run():
+    datafile = sys.argv[1]
+
+    main(data_file=datafile)
 
 if __name__ == "__main__":
-    main("pistachio_20230724")
+    run()
